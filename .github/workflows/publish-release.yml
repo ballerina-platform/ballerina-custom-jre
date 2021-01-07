@@ -1,10 +1,13 @@
 name: Publish release
+
 on:
   workflow_dispatch:
+
 jobs:
   get_release_version:
     name: Get Release Version
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'ballerina-platform'
     steps:
       - id: checkout
         uses: actions/checkout@v2
@@ -18,6 +21,7 @@ jobs:
     needs: get_release_version
     name: Create Release
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'ballerina-platform'
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
@@ -35,6 +39,7 @@ jobs:
     name: Release assets
     needs: [ get_release_version, create_release ]
     runs-on: ${{ matrix.os }}
+    if: github.repository_owner == 'ballerina-platform'
     strategy:
       fail-fast: false
       matrix:
