@@ -1,0 +1,175 @@
+/*
+ * Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+
+import groovy.json.JsonSlurper
+import org.apache.tools.ant.taskdefs.condition.Os
+
+plugins {
+    id "de.undercouch.download" version "4.1.1"
+    id "net.researchgate.release" version "2.8.0"
+    id "maven-publish"
+}
+
+def jdkModules = ""
+
+configurations {
+    zip
+}
+
+def ballerinaJreLinuxZip = file("$buildDir/distributions/ballerina-jre-linux-${project.version}.zip")
+def ballerinaJreWindowsZip = file("$buildDir/distributions/ballerina-jre-windows-${project.version}.zip")
+def ballerinaJreMacOSZip = file("$buildDir/distributions/ballerina-jre-macos-${project.version}.zip")
+
+task getModuleList {
+    // Reads default modules included in AdoptOpenJre 11
+    def defaultModuleFile = new File("$projectDir/resources/adoptOpenJre11_modules.json")
+    def defaultModules = new JsonSlurper().parseText(defaultModuleFile.text).modules.join(',')
+
+    // Reads additional modules required for ballerina runtime.
+    def additionalModuleFile = new File("$projectDir/resources/additional_modules.json")
+    def additionalModules = new JsonSlurper().parseText(additionalModuleFile.text).modules.join(',')
+    jdkModules = "${defaultModules},${additionalModules}"
+}
+
+task downloadJdkforLinux(type: Download) {
+    src project.linuxJdkUrl
+    dest new File("$buildDir/temp/downloads/", "jdk-linux.tar.gz")
+    overwrite false
+    onlyIfModified true
+}
+
+task downloadJdkforWindows(type: Download) {
+    src project.windowsJdkUrl
+    dest new File("$buildDir/temp/downloads/", "jdk-windows.zip")
+    overwrite false
+    onlyIfModified true
+}
+
+task downloadJdkforMac(type: Download) {
+    src project.macJdkUrl
+    dest new File("$buildDir/temp/downloads/", "jdk-macOS.tar.gz")
+    overwrite false
+    onlyIfModified true
+}
+
+task extractJdkForLinux(type: Copy, dependsOn: downloadJdkforLinux) {
+    from tarTree(downloadJdkforLinux.dest)
+    into "$buildDir/temp/extracted/jdk-linux"
+    includeEmptyDirs = false
+}
+
+task extractJdkForWindows(type: Copy, dependsOn: downloadJdkforWindows) {
+    from zipTree(downloadJdkforWindows.dest)
+    into "$buildDir/temp/extracted/jdk-windows"
+    includeEmptyDirs = false
+}
+
+task extractJdkForMac(type: Copy, dependsOn: downloadJdkforMac) {
+    from tarTree(downloadJdkforMac.dest)
+    into "$buildDir/temp/extracted/jdk-macos"
+    includeEmptyDirs = false
+}
+
+task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
+    workingDir "$buildDir/temp/extracted/jdk-linux/jdk-${project.jdkVersion}/bin"
+    commandLine 'jlink', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-linux"
+}
+
+task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
+    workingDir "$buildDir/temp/extracted/jdk-windows/jdk-${project.jdkVersion}/bin"
+    commandLine 'cmd', "/c", 'jlink.exe', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-windows"
+}
+
+task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) {
+    workingDir "$buildDir/temp/extracted/jdk-macos/jdk-${project.jdkVersion}/Contents/Home/bin"
+    commandLine 'jlink', '--add-modules', jdkModules, '--output', "$buildDir/temp//generated/ballerina-jre-macos"
+}
+
+task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
+    from fileTree("$buildDir/temp/generated/ballerina-jre-linux/")
+    archiveName "ballerina-jre-linux-${project.version}.zip"
+    destinationDirectory = file("$buildDir/distributions/")
+    outputs.file ballerinaJreLinuxZip
+}
+
+task packageJreForWindows(type: Zip, dependsOn: assembleJreForWindows) {
+    from fileTree("$buildDir/temp/generated/ballerina-jre-windows/")
+    archiveName "ballerina-jre-windows-${project.version}.zip"
+    destinationDirectory = file("$buildDir/distributions/")
+    outputs.file ballerinaJreWindowsZip
+}
+
+task packageJreForMac(type: Zip, dependsOn: assembleJreForMac) {
+    from fileTree("$buildDir/temp/generated/ballerina-jre-macos/")
+    archiveName "ballerina-jre-macos-${project.version}.zip"
+    destinationDirectory = file("$buildDir/distributions/")
+    outputs.file ballerinaJreMacOSZip
+}
+
+def moduleVersion = project.version
+if (moduleVersion.indexOf('-') != -1) {
+    moduleVersion = moduleVersion.substring(0, moduleVersion.indexOf('-'))
+}
+
+task build {
+    if (Os.isFamily(Os.FAMILY_MAC)) {
+        dependsOn packageJreForMac
+    } else if (Os.isFamily(Os.FAMILY_UNIX)) {
+        dependsOn packageJreForLinux
+    } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        dependsOn packageJreForWindows
+    }
+}
+
+artifacts {
+    zip file: ballerinaJreLinuxZip, builtBy: packageJreForLinux
+    zip file: ballerinaJreWindowsZip, builtBy: packageJreForWindows
+    zip file: ballerinaJreMacOSZip, builtBy: packageJreForMac
+}
+
+release {
+    failOnPublishNeeded = false
+    failOnUpdateNeeded = false
+    failOnUnversionedFiles = false
+    failOnCommitNeeded = false
+    buildTasks = ['build']
+    versionPropertyFile = 'gradle.properties'
+    tagTemplate = 'v$version'
+    newVersionCommitMessage = "Update to next development version "
+    preTagCommitMessage = "Prepare release version "
+    tagCommitMessage = "Tag release "
+
+    git {
+        requireBranch = "release-${moduleVersion}"
+        pushToRemote = 'origin'
+    }
+}
+
+task cleanGeneratedFiles(type: Delete) {
+    delete "$buildDir/temp/generated/"
+}
+
+task cleanTemporaryFiles(type: Delete) {
+    delete "$buildDir/temp/"
+}
+
+assembleJreForLinux.dependsOn getModuleList
+assembleJreForWindows.dependsOn getModuleList
+assembleJreForMac.dependsOn getModuleList
+
+assembleJreForLinux.dependsOn cleanGeneratedFiles
+assembleJreForWindows.dependsOn cleanGeneratedFiles
+assembleJreForMac.dependsOn cleanGeneratedFiles
