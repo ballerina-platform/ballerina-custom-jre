@@ -36,18 +36,18 @@ jobs:
       - name: Ubuntu Build
         if: matrix.os == 'ubuntu-latest'
         env:
-          packageUser: ${{ secrets.USERNAME }}
-          packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
+          packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
+          packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: ./gradlew build --scan
       - name: Windows Build
         if: matrix.os == 'windows-latest'
         env:
-          packageUser: ${{ secrets.USERNAME }}
-          packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
+          packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
+          packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: ./gradlew.bat build --scan
       - name: MacOS Build
         if: matrix.os == 'macOS-latest'
         env:
-          packageUser: ${{ secrets.USERNAME }}
-          packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
+          packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
+          packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: ./gradlew build --scan

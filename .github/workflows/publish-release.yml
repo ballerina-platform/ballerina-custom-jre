@@ -29,7 +29,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         with:
           tag_name: ${{ needs.get_release_version.outputs.version }}
           release_name: ${{ needs.get_release_version.outputs.version }}
@@ -54,26 +54,26 @@ jobs:
       - name: Build JRE on Linux
         if: matrix.os == 'ubuntu-latest'
         env:
-          packageUser: ${{ secrets.USERNAME }}
-          packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
+          packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
+          packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: ./gradlew build
       - name: Build JRE on Windows
         if: matrix.os == 'windows-latest'
         env:
-          packageUser: ${{ secrets.USERNAME }}
-          packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
+          packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
+          packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: ./gradlew.bat build
       - name: Build JRE on macOS
         if: matrix.os == 'macOS-latest'
         env:
-          packageUser: ${{ secrets.USERNAME }}
-          packagePAT: ${{ secrets.JRE_ARTIFACTS_TOKEN }}
+          packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
+          packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: ./gradlew build
       - name: Upload linux artifacts
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_name: ballerina-jre-linux-${{ needs.get_release_version.outputs.version }}.zip
@@ -83,7 +83,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_name: ballerina-jre-windows-${{ needs.get_release_version.outputs.version }}.zip
@@ -93,7 +93,7 @@ jobs:
         if: matrix.os == 'macOS-latest'
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
           asset_name: ballerina-jre-macos-${{ needs.get_release_version.outputs.version }}.zip
