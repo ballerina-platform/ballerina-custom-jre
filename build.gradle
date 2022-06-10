@@ -84,17 +84,17 @@ task extractJdkForMac(type: Copy, dependsOn: downloadJdkforMac) {
 }
 
 task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
-    workingDir "$buildDir/temp/extracted/jdk-linux/jdk-${project.jdkVersion}/bin"
+    workingDir "$buildDir/temp/extracted/jdk-linux/${project.jdkVersion}-jre/bin"
     commandLine 'jlink', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-linux"
 }
 
 task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
-    workingDir "$buildDir/temp/extracted/jdk-windows/jdk-${project.jdkVersion}/bin"
+    workingDir "$buildDir/temp/extracted/jdk-windows/${project.jdkVersion}-jre/bin"
     commandLine 'cmd', "/c", 'jlink.exe', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-windows"
 }
 
 task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) {
-    workingDir "$buildDir/temp/extracted/jdk-macos/jdk-${project.jdkVersion}/Contents/Home/bin"
+    workingDir "$buildDir/temp/extracted/jdk-macos/${project.jdkVersion}-jre/Contents/Home/bin"
     commandLine 'jlink', '--add-modules', jdkModules, '--output', "$buildDir/temp//generated/ballerina-jre-macos"
 }
 
