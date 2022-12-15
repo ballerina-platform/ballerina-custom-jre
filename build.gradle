@@ -29,9 +29,9 @@ configurations {
     zip
 }
 
-def ballerinaJreLinuxZip = file("$buildDir/distributions/ballerina-jre-linux-${project.version}.zip")
-def ballerinaJreWindowsZip = file("$buildDir/distributions/ballerina-jre-windows-${project.version}.zip")
-def ballerinaJreMacOSZip = file("$buildDir/distributions/ballerina-jre-macos-${project.version}.zip")
+def ballerinaJreLinuxZip = file("$buildDir/distributions/ballerina-jre-linux-64-${project.version}.zip")
+def ballerinaJreWindowsZip = file("$buildDir/distributions/ballerina-jre-windows-64-${project.version}.zip")
+def ballerinaJreMacOSZip = file("$buildDir/distributions/ballerina-jre-macos-64-${project.version}.zip")
 
 task getModuleList {
     // Reads default modules included in AdoptOpenJre 11
@@ -85,36 +85,36 @@ task extractJdkForMac(type: Copy, dependsOn: downloadJdkforMac) {
 
 task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
     workingDir "$buildDir/temp/extracted/jdk-linux/jdk-${project.jdkVersion}-jre/bin"
-    commandLine 'jlink', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-linux"
+    commandLine 'jlink', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-linux-64"
 }
 
 task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
     workingDir "$buildDir/temp/extracted/jdk-windows/jdk-${project.jdkVersion}-jre/bin"
-    commandLine 'cmd', "/c", 'jlink.exe', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-windows"
+    commandLine 'cmd', "/c", 'jlink.exe', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-windows-64"
 }
 
 task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) {
     workingDir "$buildDir/temp/extracted/jdk-macos/jdk-${project.jdkVersion}-jre/Contents/Home/bin"
-    commandLine 'jlink', '--add-modules', jdkModules, '--output', "$buildDir/temp//generated/ballerina-jre-macos"
+    commandLine 'jlink', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-macos-64"
 }
 
 task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
-    from fileTree("$buildDir/temp/generated/ballerina-jre-linux/")
-    archiveName "ballerina-jre-linux-${project.version}.zip"
+    from fileTree("$buildDir/temp/generated/ballerina-jre-linux-64/")
+    archiveName "ballerina-jre-linux-64-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreLinuxZip
 }
 
 task packageJreForWindows(type: Zip, dependsOn: assembleJreForWindows) {
-    from fileTree("$buildDir/temp/generated/ballerina-jre-windows/")
-    archiveName "ballerina-jre-windows-${project.version}.zip"
+    from fileTree("$buildDir/temp/generated/ballerina-jre-windows-64/")
+    archiveName "ballerina-jre-windows-64-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreWindowsZip
 }
 
 task packageJreForMac(type: Zip, dependsOn: assembleJreForMac) {
-    from fileTree("$buildDir/temp/generated/ballerina-jre-macos/")
-    archiveName "ballerina-jre-macos-${project.version}.zip"
+    from fileTree("$buildDir/temp/generated/ballerina-jre-macos-64/")
+    archiveName "ballerina-jre-macos-64-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreMacOSZip
 }
