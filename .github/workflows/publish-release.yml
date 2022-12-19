@@ -76,8 +76,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-linux-${{ needs.get_release_version.outputs.version }}.zip
-          asset_path: build/distributions/ballerina-jre-linux-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
+          asset_name: ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.zip
+          asset_path: build/distributions/ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
           asset_content_type: application/octet-stream
       - name: Upload windows artifacts
         if: matrix.os == 'windows-latest'
@@ -86,8 +86,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-windows-${{ needs.get_release_version.outputs.version }}.zip
-          asset_path: build/distributions/ballerina-jre-windows-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
+          asset_name: ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.zip
+          asset_path: build/distributions/ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
           asset_content_type: application/octet-stream
       - name: Upload macOS artifacts
         if: matrix.os == 'macOS-latest'
@@ -96,6 +96,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-macos-${{ needs.get_release_version.outputs.version }}.zip
-          asset_path: build/distributions/ballerina-jre-macos-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
+          asset_name: ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.zip
+          asset_path: build/distributions/ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
           asset_content_type: application/octet-stream

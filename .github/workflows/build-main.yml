@@ -55,17 +55,17 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: ballerina-jre-linux-${{ needs.get_version.outputs.version }}.zip
-          path: build/distributions/ballerina-jre-linux-${{ needs.get_version.outputs.version }}.zip
+          name: ballerina-jre-linux-64-${{ needs.get_version.outputs.version }}.zip
+          path: build/distributions/ballerina-jre-linux-64-${{ needs.get_version.outputs.version }}.zip
       - name: Archive Windows Artifacts
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: ballerina-jre-windows-${{ needs.get_version.outputs.version }}.zip
-          path: build/distributions/ballerina-jre-windows-${{ needs.get_version.outputs.version }}.zip
+          name: ballerina-jre-windows-64-${{ needs.get_version.outputs.version }}.zip
+          path: build/distributions/ballerina-jre-windows-64-${{ needs.get_version.outputs.version }}.zip
       - name: Archive MacOS Artifacts
         if: matrix.os == 'macOS-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: ballerina-jre-macos-${{ needs.get_version.outputs.version }}.zip
-          path: build/distributions/ballerina-jre-macos-${{ needs.get_version.outputs.version }}.zip
+          name: ballerina-jre-macos-64-${{ needs.get_version.outputs.version }}.zip
+          path: build/distributions/ballerina-jre-macos-64-${{ needs.get_version.outputs.version }}.zip
