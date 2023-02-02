@@ -63,12 +63,12 @@ jobs:
         with:
           name: ballerina-jre-windows-64-${{ needs.get_version.outputs.version }}.zip
           path: build/distributions/ballerina-jre-windows-64-${{ needs.get_version.outputs.version }}.zip
-      - name: Archive MacOS-X86 Artifacts
+      - name: Archive MacOS Artifacts
         if: matrix.os == 'macOS-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: ballerina-jre-macos-x86-64-${{ needs.get_version.outputs.version }}.zip
-          path: build/distributions/ballerina-jre-macos-x86-64-${{ needs.get_version.outputs.version }}.zip
+          name: ballerina-jre-macos-64-${{ needs.get_version.outputs.version }}.zip
+          path: build/distributions/ballerina-jre-macos-64-${{ needs.get_version.outputs.version }}.zip
       - name: Archive MacOS-ARM Artifacts
         if: matrix.os == 'macOS-latest'
         uses: actions/upload-artifact@v2
