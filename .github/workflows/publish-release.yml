@@ -89,15 +89,15 @@ jobs:
           asset_name: ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.zip
           asset_path: build/distributions/ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
           asset_content_type: application/octet-stream
-      - name: Upload macOS-X86 artifacts
+      - name: Upload macOS artifacts
         if: matrix.os == 'macOS-latest'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-macos-x86-64-${{ needs.get_release_version.outputs.version }}.zip
-          asset_path: build/distributions/ballerina-jre-macos-x86-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
+          asset_name: ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.zip
+          asset_path: build/distributions/ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
           asset_content_type: application/octet-stream
       - name: Upload macOS-ARM artifacts
         if: matrix.os == 'macOS-latest'
