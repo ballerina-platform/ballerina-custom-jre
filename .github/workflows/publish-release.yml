@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+        os: [ ubuntu-latest, windows-latest, macOS-latest-x64, macOS-latest-arm64 ]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -64,7 +64,7 @@ jobs:
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: ./gradlew.bat build
       - name: Build JRE on macOS
-        if: matrix.os == 'macOS-latest'
+        if: contains(matrix.os, 'macOS-latest')
         env:
           packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
@@ -90,7 +90,7 @@ jobs:
           asset_path: build/distributions/ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
           asset_content_type: application/octet-stream
       - name: Upload macOS artifacts
-        if: matrix.os == 'macOS-latest'
+        if: matrix.os == 'macOS-latest-x64'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
@@ -100,7 +100,7 @@ jobs:
           asset_path: build/distributions/ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
           asset_content_type: application/octet-stream
       - name: Upload macOS-ARM artifacts
-        if: matrix.os == 'macOS-latest'
+        if: matrix.os == 'macOS-latest-arm64'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
