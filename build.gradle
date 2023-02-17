@@ -107,9 +107,9 @@ task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
     commandLine 'cmd', "/c", 'jlink.exe', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-windows-64"
 }
 
-task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) { // Check for Content/Home directory
-    workingDir "$buildDir/temp/extracted/jdk-macos/jdk-${project.jdkVersion}-jre/Contents/Home/bin"
-    commandLine 'jlink', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-macos-64"
+task assembleJreForMac(type: Copy, dependsOn: extractJdkForMac) { // Check for Content/Home directory
+    from "$buildDir/temp/extracted/jdk-macos/jdk-${project.jdkVersion}-jre/Contents/Home/"
+    into "$buildDir/temp/generated/ballerina-jre-macos-64/"
 }
 
 task assembleJreForMacARM(type: Exec, dependsOn: extractJdkForMacARM) { // Check for Content/Home directory
@@ -152,11 +152,8 @@ if (moduleVersion.indexOf('-') != -1) {
 
 task build {
     if (Os.isFamily(Os.FAMILY_MAC)) {
-        if (Os.isArch("aarch64")) {
-            dependsOn packageJreForMacARM
-        } else {
-            dependsOn packageJreForMac
-        }
+        dependsOn packageJreForMacARM
+        dependsOn packageJreForMac
     } else if (Os.isFamily(Os.FAMILY_UNIX)) {
         dependsOn packageJreForLinux
     } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
