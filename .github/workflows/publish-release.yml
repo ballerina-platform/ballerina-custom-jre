@@ -64,7 +64,7 @@ jobs:
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: ./gradlew.bat build
       - name: Build JRE on macOS
-        if: matrix.os == 'macOS-latest
+        if: matrix.os == 'macOS-latest'
         env:
           packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
