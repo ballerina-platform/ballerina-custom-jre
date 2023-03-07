@@ -98,23 +98,27 @@ task extractJdkForMacARM(type: Copy, dependsOn: downloadJdkforMacARM) {
 }
 
 task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
-    workingDir "$buildDir/temp/extracted/jdk-linux/jdk-${project.jdkVersion}-jre/bin"
-    commandLine 'jlink', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-linux-64"
+    workingDir "$buildDir/temp/extracted/jdk-linux/jdk-${project.jdkVersion}/bin"
+    commandLine 'jlink', '--module-path', "$buildDir/temp/extracted/jdk-linux/jdk-${project.jdkVersion}/jmods",
+            '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-linux-64"
 }
 
 task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
-    workingDir "$buildDir/temp/extracted/jdk-windows/jdk-${project.jdkVersion}-jre/bin"
-    commandLine 'cmd', "/c", 'jlink.exe', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-windows-64"
+    workingDir "$buildDir/temp/extracted/jdk-windows/jdk-${project.jdkVersion}/bin"
+    commandLine 'cmd', "/c", 'jlink.exe', '--module-path', "$buildDir/temp/extracted/jdk-windows/jdk-${project.jdkVersion}/jmods",
+            '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-windows-64"
 }
 
 task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) { // Check for Content/Home directory
-    workingDir "$buildDir/temp/extracted/jdk-macos/jdk-${project.jdkVersion}-jre/Contents/Home/bin"
-    commandLine 'jlink', '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-macos-64"
+    workingDir "$buildDir/temp/extracted/jdk-macos/jdk-${project.jdkVersion}/Contents/Home/bin"
+    commandLine 'jlink','--module-path', "$buildDir/temp/extracted/jdk-macos/jdk-${project.jdkVersion}/jmods",
+            '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-macos-64"
 }
 
-task assembleJreForMacARM(type: Copy, dependsOn: extractJdkForMacARM) { // Check for Content/Home directory
-    from "$buildDir/temp/extracted/jdk-macos-arm/jdk-${project.jdkVersion}-jre/Contents/Home/"
-    into "$buildDir/temp/generated/ballerina-jre-macos-arm-64/"
+task assembleJreForMacARM(type: Exec, dependsOn: extractJdkForMacARM) { // Check for Content/Home directory
+    workingDir "$buildDir/temp/extracted/jdk-macos-arm/jdk-${project.jdkVersion}/Contents/Home/bin"
+    commandLine 'jlink','--module-path', "$buildDir/temp/extracted/jdk-macos-arm/jdk-${project.jdkVersion}/jmods",
+            '--add-modules', jdkModules, '--output', "$buildDir/temp/generated/ballerina-jre-macos-arm-64"
 }
 
 task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {

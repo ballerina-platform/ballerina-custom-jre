@@ -23,7 +23,6 @@
     "java.xml",
     "java.xml.crypto",
     "jdk.accessibility",
-    "jdk.aot",
     "jdk.charsets",
     "jdk.crypto.cryptoki",
     "jdk.crypto.ec",
