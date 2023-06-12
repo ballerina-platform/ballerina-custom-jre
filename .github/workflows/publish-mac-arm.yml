@@ -27,16 +27,25 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository_owner == 'ballerina-platform'
     outputs:
+      id: update_release
       upload_url: ${{ steps.update_release.outputs.upload_url }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
       - name: cosign-installer
         uses: sigstore/cosign-installer@v3.0.3
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install GitHub CLI
+        run: |
+          npm install -g github-cli
+          gh --version
       - name: Retrieve MacOS-ARM Artifact
         run:
           |
-          wget https://github.com/${{ github.actor }}/ballerina-custom-jre/releases/download/${{ needs.get_release_version.outputs.version }}/ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.zip
+          wget https://github.com/ballerina-platform/ballerina-custom-jre/releases/download/${{ needs.get_release_version.outputs.version }}/ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.zip
       - name: Sign the MacOS-ARM Artifact
         env:
           COSIGN_EXPERIMENTAL: "true"
@@ -46,14 +55,11 @@ jobs:
         env:
           COSIGN_EXPERIMENTAL: "true"
         run: |
-          cosign verify-blob ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.zip --certificate ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/${{ github.actor }}/ballerina-custom-jre/.github/workflows/publish-mac-arm.yml@refs/heads/main --certificate-oidc-issuer=https://token.actions.githubusercontent.com 
-      - uses: IsaacShelton/update-existing-release@v1.3.2
-        with:
-          token: ${{secrets.GITHUB_TOKEN}}
-          release: ${{ needs.get_release_version.outputs.version }}
-          tag: ${{ needs.get_release_version.outputs.version }}
-          replace: false
-          files: >
-            ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.zip
-            ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem
-            ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig
+          cosign verify-blob ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.zip --certificate ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-mac-arm.yml@refs/heads/main --certificate-oidc-issuer=https://token.actions.githubusercontent.com 
+      - name: Upload MacOS-ARM Release Assets
+        env:
+          GH_TOKEN : ${{ secrets.BALLERINA_BOT_TOKEN }}
+        run: |
+          gh release upload ${{ needs.get_release_version.outputs.version }} ./ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.zip --clobber
+          gh release upload ${{ needs.get_release_version.outputs.version }} ./ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem
+          gh release upload ${{ needs.get_release_version.outputs.version }} ./ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig

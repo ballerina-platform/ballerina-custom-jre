@@ -74,7 +74,7 @@ jobs:
         env:
           COSIGN_EXPERIMENTAL: "true"
         run: |
-          cosign verify-blob build/distributions/ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/${{ github.actor }}/ballerina-custom-jre/.github/workflows/publish-release.yml@refs/heads/main --certificate-oidc-issuer=https://token.actions.githubusercontent.com
+          cosign verify-blob build/distributions/ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-release.yml@refs/heads/main --certificate-oidc-issuer=https://token.actions.githubusercontent.com
       - name: Build JRE on Windows
         if: matrix.os == 'windows-latest'
         env:
@@ -92,7 +92,7 @@ jobs:
         env:
           COSIGN_EXPERIMENTAL: "true"
         run: |
-          cosign verify-blob build/distributions/ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/${{ github.actor }}/ballerina-custom-jre/.github/workflows/publish-release.yml@refs/heads/main --certificate-oidc-issuer=https://token.actions.githubusercontent.com
+          cosign verify-blob build/distributions/ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-release.yml@refs/heads/main --certificate-oidc-issuer=https://token.actions.githubusercontent.com
       - name: Build JRE on macOS
         if: matrix.os == 'macOS-latest'
         env:
@@ -110,7 +110,7 @@ jobs:
         env:
           COSIGN_EXPERIMENTAL: "true"
         run: |
-          cosign verify-blob build/distributions/ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/${{ github.actor }}/ballerina-custom-jre/.github/workflows/publish-release.yml@refs/heads/main --certificate-oidc-issuer=https://token.actions.githubusercontent.com 
+          cosign verify-blob build/distributions/ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-release.yml@refs/heads/main --certificate-oidc-issuer=https://token.actions.githubusercontent.com 
       - name: Upload linux artifacts
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-release-asset@v1
