@@ -47,13 +47,9 @@ jobs:
           |
           wget https://github.com/ballerina-platform/ballerina-custom-jre/releases/download/${{ needs.get_release_version.outputs.version }}/ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.zip
       - name: Sign the MacOS-ARM Artifact
-        env:
-          COSIGN_EXPERIMENTAL: "true"
         run: |
           cosign sign-blob ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.zip --output-certificate ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem --output-signature ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig --yes
       - name: Verify the MacOS-ARM Artifact
-        env:
-          COSIGN_EXPERIMENTAL: "true"
         run: |
           cosign verify-blob ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.zip --certificate ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-mac-arm.yml@refs/heads/main --certificate-oidc-issuer=https://token.actions.githubusercontent.com 
       - name: Upload MacOS-ARM Release Assets
