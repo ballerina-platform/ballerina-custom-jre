@@ -26,9 +26,6 @@ jobs:
     name: Update Release
     runs-on: ubuntu-latest
     if: github.repository_owner == 'ballerina-platform'
-    outputs:
-      id: update_release
-      upload_url: ${{ steps.update_release.outputs.upload_url }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -56,6 +53,5 @@ jobs:
         env:
           GH_TOKEN : ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: |
-          gh release upload ${{ needs.get_release_version.outputs.version }} ./ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.zip --clobber
           gh release upload ${{ needs.get_release_version.outputs.version }} ./ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem
           gh release upload ${{ needs.get_release_version.outputs.version }} ./ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig
