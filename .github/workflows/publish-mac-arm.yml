@@ -1,0 +1,49 @@
+name: Publish MacOS-ARM release
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionName:
+        description: 'Specify the Version name eg: 1.1.0'
+        required: true
+        default: ''
+  
+permissions:
+  id-token: write 
+  contents: write
+
+jobs:
+  update_release:
+    name: Update Release
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'ballerina-platform'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: cosign-installer
+        uses: sigstore/cosign-installer@v3.0.3
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install GitHub CLI
+        run: |
+          npm install -g github-cli
+          gh --version
+      - name: Retrieve MacOS-ARM Artifact
+        run:
+          |
+          wget https://github.com/ballerina-platform/ballerina-custom-jre/releases/download/${{ github.event.inputs.versionName }}/ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.zip
+      - name: Sign the MacOS-ARM Artifact
+        run: |
+          cosign sign-blob ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.zip --output-certificate ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.pem --output-signature ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.sig --yes
+      - name: Verify the MacOS-ARM Artifact
+        run: |
+          cosign verify-blob ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.zip --certificate ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.pem --signature ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-mac-arm.yml@refs/heads/main --certificate-oidc-issuer=https://token.actions.githubusercontent.com 
+      - name: Update MacOS-ARM Release Assets
+        env:
+          GH_TOKEN : ${{ secrets.BALLERINA_BOT_TOKEN }}
+        run: |
+          gh release upload ${{ github.event.inputs.versionName }} ./ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.pem
+          gh release upload ${{ github.event.inputs.versionName }} ./ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.sig
+          
