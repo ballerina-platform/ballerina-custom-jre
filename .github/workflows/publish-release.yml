@@ -136,7 +136,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.zip
+          asset_name: ballerina-jre-win-64-${{ needs.get_release_version.outputs.version }}.zip
           asset_path: build/distributions/ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
           asset_content_type: application/octet-stream
       - name: Upload Certifacte of the Windows Artifact to GitHub release
@@ -146,7 +146,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         with:
           upload_url:  ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.pem
+          asset_name: ballerina-jre-win-64-${{ needs.get_release_version.outputs.version }}.pem
           asset_path: ./ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.pem
           asset_content_type: application/octet-stream
       - name: Upload Signature of the Windows Artifact to GitHub release
@@ -156,7 +156,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
         with:
           upload_url:  ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.sig
+          asset_name: ballerina-jre-win-64-${{ needs.get_release_version.outputs.version }}.sig
           asset_path: ./ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.sig
           asset_content_type: application/octet-stream
       - name: Upload macOS artifacts
