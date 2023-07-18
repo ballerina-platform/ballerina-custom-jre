@@ -33,7 +33,7 @@ jobs:
           wget "$baseUrl/ballerina-jre-linux-64-$VERSION.zip"
           wget "$baseUrl/ballerina-jre-macos-64-$VERSION.zip"
           wget "$baseUrl/ballerina-jre-macos-arm-64-$VERSION.zip"
-          wget "$baseUrl/ballerina-jre-windows-64-$VERSION.zip"
+          wget "$baseUrl/ballerina-jre-win-64-$VERSION.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
           packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}

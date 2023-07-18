@@ -1,0 +1,42 @@
+name: Sync artifacts from dev to prod on demand
+
+on:
+  workflow_dispatch:
+    inputs:
+      jreVersion:
+        description: 'Version of the ballerina jre release, ex:1.0.0'
+        required: true
+
+jobs:
+  transfer-artifacts:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'ballerina-platform'
+
+    steps:
+      - name: Checkout dev website
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Sync artifacts from dev to prod
+        shell: bash
+        env:
+          s3_acc_id: ${{ secrets.S3_ID }}
+          s3_acc_key: ${{ secrets.S3_KEY }}
+        run: |
+          sudo apt-get install python3-setuptools
+          python3 -m pip install --user awscli
+
+          aws configure set aws_access_key_id $s3_acc_id
+          aws configure set aws_secret_access_key $s3_acc_key
+          aws --version
+
+          VERSION=${{ github.event.inputs.jreVersion }}
+          echo "custom JRE release version: $VERSION"
+
+          aws s3 cp s3://dist-dev.ballerina.io/downloads/dependencies/$VERSION/ s3://dist.ballerina.io/downloads/dependencies/$VERSION/ --recursive
+
