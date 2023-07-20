@@ -1,0 +1,46 @@
+name: Transfer dependency artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      jreVersion:
+        description: 'Version of the ballerina jre release, ex:1.0.0'
+        required: true
+
+jobs:
+  transfer-artifacts:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'ballerina-platform'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download artifacts
+        run: |
+          VERSION="${{ github.event.inputs.jreVersion }}"
+          baseUrl="https://github.com/ballerina-platform/ballerina-custom-jre/releases/download/$VERSION"
+          rm -rf $VERSION
+          mkdir $VERSION
+          cd $VERSION
+
+          wget "$baseUrl/ballerina-jre-linux-64-$VERSION.zip"
+          wget "$baseUrl/ballerina-jre-macos-64-$VERSION.zip"
+          wget "$baseUrl/ballerina-jre-macos-arm-64-$VERSION.zip"
+          wget "$baseUrl/ballerina-jre-win-64-$VERSION.zip"
+        env:
+          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
+          packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
+          packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
+
+      - name: Publish Artifacts
+        run: |
+          sudo apt-get install python3-setuptools
+          python3 -m pip install --user awscli
+          aws configure set aws_access_key_id $s3_acc_id
+          aws configure set aws_secret_access_key $s3_acc_key
+          aws s3 cp $VERSION s3://dist-dev.ballerina.io/downloads/dependencies --recursive
+        env:
+          s3_acc_id: ${{ secrets.S3_ID }}
+          s3_acc_key: ${{ secrets.S3_KEY }}
+
