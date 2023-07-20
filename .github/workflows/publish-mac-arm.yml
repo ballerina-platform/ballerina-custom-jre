@@ -39,7 +39,7 @@ jobs:
           cosign sign-blob ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.zip --output-certificate ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.pem --output-signature ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.sig --yes
       - name: Verify the MacOS-ARM Artifact
         run: |
-          cosign verify-blob ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.zip --certificate ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.pem --signature ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-mac-arm.yml@refs/heads/main --certificate-oidc-issuer=https://token.actions.githubusercontent.com 
+          cosign verify-blob ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.zip --certificate ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.pem --signature ballerina-jre-macos-arm-64-${{ github.event.inputs.versionName }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-mac-arm.yml@${{ github.ref }} --certificate-oidc-issuer=https://token.actions.githubusercontent.com 
       - name: Update MacOS-ARM Release Assets
         env:
           GH_TOKEN : ${{ secrets.BALLERINA_BOT_TOKEN }}
