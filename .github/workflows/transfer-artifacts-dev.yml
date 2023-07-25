@@ -1,4 +1,4 @@
-name: Transfer dependency artifacts
+name: Transfer dependency artifacts - dev
 
 on:
   workflow_dispatch:
@@ -28,6 +28,8 @@ jobs:
           wget "$baseUrl/ballerina-jre-macos-64-$VERSION.zip"
           wget "$baseUrl/ballerina-jre-macos-arm-64-$VERSION.zip"
           wget "$baseUrl/ballerina-jre-win-64-$VERSION.zip"
+
+          echo VERSION=$VERSION >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
           packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
