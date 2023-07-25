@@ -1,4 +1,4 @@
-name: Sync artifacts from dev to prod on demand
+name: Transfer dependency artifacts - prod
 
 on:
   workflow_dispatch:
