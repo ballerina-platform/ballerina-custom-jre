@@ -41,7 +41,7 @@ jobs:
           python3 -m pip install --user awscli
           aws configure set aws_access_key_id $s3_acc_id
           aws configure set aws_secret_access_key $s3_acc_key
-          aws s3 cp $VERSION s3://dist-dev.ballerina.io/downloads/dependencies --recursive
+          aws s3 cp $VERSION s3://dist-dev.ballerina.io/downloads/dependencies/$VERSION --recursive
         env:
           s3_acc_id: ${{ secrets.S3_ID }}
           s3_acc_key: ${{ secrets.S3_KEY }}
