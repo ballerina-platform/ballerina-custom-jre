@@ -30,6 +30,7 @@ configurations {
 }
 
 def ballerinaJreLinuxZip = file("$buildDir/distributions/ballerina-jre-linux-64-${project.version}.zip")
+def ballerinaJreLinuxARMZip = file("$buildDir/distributions/ballerina-jre-linux-arm-64-${project.version}.zip")
 def ballerinaJreWindowsZip = file("$buildDir/distributions/ballerina-jre-windows-64-${project.version}.zip")
 def ballerinaJreMacOSZip = file("$buildDir/distributions/ballerina-jre-macos-64-${project.version}.zip")
 def ballerinaJreMacOSARMZip = file("$buildDir/distributions/ballerina-jre-macos-arm-64-${project.version}.zip")
@@ -48,6 +49,13 @@ task getModuleList {
 task downloadJdkforLinux(type: Download) {
     src project.linuxJdkUrl
     dest new File("$buildDir/temp/downloads/", "jdk-linux.tar.gz")
+    overwrite false
+    onlyIfModified true
+}
+
+task downloadJdkforLinuxARM(type: Download) {
+    src project.linuxARMJdkUrl
+    dest new File("$buildDir/temp/downloads/", "jdk-linux-arm.tar.gz")
     overwrite false
     onlyIfModified true
 }
@@ -79,6 +87,12 @@ task extractJdkForLinux(type: Copy, dependsOn: downloadJdkforLinux) {
     includeEmptyDirs = false
 }
 
+task extractJdkForLinuxARM(type: Copy, dependsOn: downloadJdkforLinux) {
+    from tarTree(downloadJdkforLinuxARM.dest)
+    into "$buildDir/temp/extracted/jdk-linux-arm"
+    includeEmptyDirs = false
+}
+
 task extractJdkForWindows(type: Copy, dependsOn: downloadJdkforWindows) {
     from zipTree(downloadJdkforWindows.dest)
     into "$buildDir/temp/extracted/jdk-windows"
@@ -103,6 +117,14 @@ task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
             '--module-path', "$buildDir/temp/extracted/jdk-linux/jdk-${project.jdkVersion}/jmods",
             '--add-modules', jdkModules,
             '--output', "$buildDir/temp/generated/ballerina-jre-linux-64/jdk-${project.jdkVersion}-jre"
+}
+
+task assembleJreForLinuxARM(type: Exec, dependsOn: extractJdkForLinux) {
+    workingDir "$buildDir/temp/extracted/jdk-linux-arm/jdk-${project.jdkVersion}/bin"
+    commandLine "$buildDir/temp/extracted/jdk-linux-arm/jdk-${project.jdkVersion}/bin/jlink",
+            '--module-path', "$buildDir/temp/extracted/jdk-linux-arm/jdk-${project.jdkVersion}/jmods",
+            '--add-modules', jdkModules,
+            '--output', "$buildDir/temp/generated/ballerina-jre-linux-arm-64/jdk-${project.jdkVersion}-jre"
 }
 
 task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
@@ -134,6 +156,13 @@ task packageJreForLinux(type: Zip, dependsOn: assembleJreForLinux) {
     archiveName "ballerina-jre-linux-64-${project.version}.zip"
     destinationDirectory = file("$buildDir/distributions/")
     outputs.file ballerinaJreLinuxZip
+}
+
+task packageJreForLinuxARM(type: Zip, dependsOn: assembleJreForLinuxARM) {
+    from fileTree("$buildDir/temp/generated/ballerina-jre-linux-arm-64/")
+    archiveName "ballerina-jre-linux-arm-64-${project.version}.zip"
+    destinationDirectory = file("$buildDir/distributions/")
+    outputs.file ballerinaJreLinuxARMZip
 }
 
 task packageJreForWindows(type: Zip, dependsOn: assembleJreForWindows) {
@@ -175,6 +204,7 @@ task build {
 
 artifacts {
     zip file: ballerinaJreLinuxZip, builtBy: packageJreForLinux
+    zip file: ballerinaJreLinuxARMZip, builtBy: packageJreForLinux
     zip file: ballerinaJreWindowsZip, builtBy: packageJreForWindows
     zip file: ballerinaJreMacOSZip, builtBy: packageJreForMac
     zip file: ballerinaJreMacOSARMZip, builtBy: packageJreForMacARM
@@ -207,12 +237,14 @@ task cleanTemporaryFiles(type: Delete) {
 }
 
 assembleJreForLinux.dependsOn getModuleList
+assembleJreForLinuxARM.dependsOn getModuleList
 assembleJreForWindows.dependsOn getModuleList
 assembleJreForMac.dependsOn getModuleList
 assembleJreForMacARM.dependsOn getModuleList
 
 
 assembleJreForLinux.dependsOn cleanGeneratedFiles
+assembleJreForLinuxARM.dependsOn cleanGeneratedFiles
 assembleJreForWindows.dependsOn cleanGeneratedFiles
 assembleJreForMac.dependsOn cleanGeneratedFiles
 assembleJreForMacARM.dependsOn cleanGeneratedFiles
