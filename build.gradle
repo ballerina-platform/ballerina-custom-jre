@@ -197,6 +197,7 @@ task build {
         dependsOn packageJreForMacARM
     } else if (Os.isFamily(Os.FAMILY_UNIX)) {
         dependsOn packageJreForLinux
+        dependsOn packageJreForLinuxARM
     } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         dependsOn packageJreForWindows
     }
