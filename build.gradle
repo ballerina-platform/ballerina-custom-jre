@@ -194,7 +194,7 @@ if (moduleVersion.indexOf('-') != -1) {
 task build {
     if (Os.isFamily(Os.FAMILY_MAC)) {
         dependsOn packageJreForMac
-//        dependsOn packageJreForMacARM
+        dependsOn packageJreForMacARM
     } else if (Os.isFamily(Os.FAMILY_UNIX)) {
         dependsOn packageJreForLinux
     } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
