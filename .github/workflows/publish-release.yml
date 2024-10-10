@@ -221,7 +221,7 @@ jobs:
         env:
           packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
-        run: ./gradlew build
+        run: ./gradlew build -PtargetedOS=macos-arm
 #      - name: Sign the macOS Artifact
 #        run: |
 #          cosign sign-blob build/distributions/ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --output-certificate ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem --output-signature ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig --yes
