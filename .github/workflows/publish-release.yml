@@ -59,12 +59,12 @@ jobs:
           packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: ./gradlew build
-      - name: Sign the Linux Artifact
-        run: |
-          cosign sign-blob build/distributions/ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --output-certificate ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.pem --output-signature ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.sig --yes
-      - name: Verify the Linux Artifact
-        run: |
-          cosign verify-blob build/distributions/ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-release.yml@${{ github.ref }} --certificate-oidc-issuer=https://token.actions.githubusercontent.com
+#      - name: Sign the Linux Artifact
+#        run: |
+#          cosign sign-blob build/distributions/ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --output-certificate ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.pem --output-signature ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.sig --yes
+#      - name: Verify the Linux Artifact
+#        run: |
+#          cosign verify-blob build/distributions/ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-release.yml@${{ github.ref }} --certificate-oidc-issuer=https://token.actions.githubusercontent.com
       - name: Upload linux artifacts
         uses: actions/upload-release-asset@v1
         env:
@@ -74,24 +74,24 @@ jobs:
           asset_name: ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.zip
           asset_path: build/distributions/ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
           asset_content_type: application/octet-stream
-      - name: Upload Certificate of the Linux Artifact to GitHub release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
-        with:
-          upload_url:  ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.pem
-          asset_path: ./ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.pem
-          asset_content_type: application/octet-stream
-      - name: Upload Signature of the Linux Artifact to GitHub release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
-        with:
-          upload_url:  ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.sig
-          asset_path: ./ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.sig
-          asset_content_type: application/octet-stream
+#      - name: Upload Certificate of the Linux Artifact to GitHub release
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
+#        with:
+#          upload_url:  ${{ needs.create_release.outputs.upload_url }}
+#          asset_name: ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.pem
+#          asset_path: ./ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.pem
+#          asset_content_type: application/octet-stream
+#      - name: Upload Signature of the Linux Artifact to GitHub release
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
+#        with:
+#          upload_url:  ${{ needs.create_release.outputs.upload_url }}
+#          asset_name: ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.sig
+#          asset_path: ./ballerina-jre-linux-64-${{ needs.get_release_version.outputs.version }}.sig
+#          asset_content_type: application/octet-stream
 
   release_windows_jre:
     name: Release Windows JRE
@@ -112,12 +112,12 @@ jobs:
           packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: ./gradlew.bat build
-      - name: Sign the Windows Artifact
-        run: |
-          cosign sign-blob build/distributions/ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --output-certificate ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.pem --output-signature ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.sig --yes
-      - name: Verify the Windows Artifact
-        run: |
-          cosign verify-blob build/distributions/ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-release.yml@${{ github.ref }} --certificate-oidc-issuer=https://token.actions.githubusercontent.com
+#      - name: Sign the Windows Artifact
+#        run: |
+#          cosign sign-blob build/distributions/ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --output-certificate ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.pem --output-signature ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.sig --yes
+#      - name: Verify the Windows Artifact
+#        run: |
+#          cosign verify-blob build/distributions/ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-release.yml@${{ github.ref }} --certificate-oidc-issuer=https://token.actions.githubusercontent.com
       - name: Upload windows artifacts
         uses: actions/upload-release-asset@v1
         env:
@@ -127,24 +127,24 @@ jobs:
           asset_name: ballerina-jre-win-64-${{ needs.get_release_version.outputs.version }}.zip
           asset_path: build/distributions/ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
           asset_content_type: application/octet-stream
-      - name: Upload Certificate of the Windows Artifact to GitHub release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
-        with:
-          upload_url:  ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-win-64-${{ needs.get_release_version.outputs.version }}.pem
-          asset_path: ./ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.pem
-          asset_content_type: application/octet-stream
-      - name: Upload Signature of the Windows Artifact to GitHub release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
-        with:
-          upload_url:  ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-win-64-${{ needs.get_release_version.outputs.version }}.sig
-          asset_path: ./ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.sig
-          asset_content_type: application/octet-stream
+#      - name: Upload Certificate of the Windows Artifact to GitHub release
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
+#        with:
+#          upload_url:  ${{ needs.create_release.outputs.upload_url }}
+#          asset_name: ballerina-jre-win-64-${{ needs.get_release_version.outputs.version }}.pem
+#          asset_path: ./ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.pem
+#          asset_content_type: application/octet-stream
+#      - name: Upload Signature of the Windows Artifact to GitHub release
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
+#        with:
+#          upload_url:  ${{ needs.create_release.outputs.upload_url }}
+#          asset_name: ballerina-jre-win-64-${{ needs.get_release_version.outputs.version }}.sig
+#          asset_path: ./ballerina-jre-windows-64-${{ needs.get_release_version.outputs.version }}.sig
+#          asset_content_type: application/octet-stream
 
   release_macos_jre:
     name: Release macOS JRE
@@ -165,12 +165,12 @@ jobs:
           packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: ./gradlew build
-      - name: Sign the macOS Artifact
-        run: |
-          cosign sign-blob build/distributions/ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --output-certificate ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.pem --output-signature ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.sig --yes
-      - name: Verify the macOS Artifact
-        run: |
-          cosign verify-blob build/distributions/ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-release.yml@${{ github.ref }} --certificate-oidc-issuer=https://token.actions.githubusercontent.com
+#      - name: Sign the macOS Artifact
+#        run: |
+#          cosign sign-blob build/distributions/ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --output-certificate ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.pem --output-signature ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.sig --yes
+#      - name: Verify the macOS Artifact
+#        run: |
+#          cosign verify-blob build/distributions/ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-release.yml@${{ github.ref }} --certificate-oidc-issuer=https://token.actions.githubusercontent.com
       - name: Upload macOS artifacts
         uses: actions/upload-release-asset@v1
         env:
@@ -180,24 +180,24 @@ jobs:
           asset_name: ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.zip
           asset_path: build/distributions/ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
           asset_content_type: application/octet-stream
-      - name: Upload Certificate of the macOS Artifact to GitHub release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
-        with:
-          upload_url:  ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.pem
-          asset_path: ./ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.pem
-          asset_content_type: application/octet-stream
-      - name: Upload Signature of the macOS Artifact to GitHub release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
-        with:
-          upload_url:  ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.sig
-          asset_path: ./ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.sig
-          asset_content_type: application/octet-stream
+#      - name: Upload Certificate of the macOS Artifact to GitHub release
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
+#        with:
+#          upload_url:  ${{ needs.create_release.outputs.upload_url }}
+#          asset_name: ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.pem
+#          asset_path: ./ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.pem
+#          asset_content_type: application/octet-stream
+#      - name: Upload Signature of the macOS Artifact to GitHub release
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
+#        with:
+#          upload_url:  ${{ needs.create_release.outputs.upload_url }}
+#          asset_name: ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.sig
+#          asset_path: ./ballerina-jre-macos-64-${{ needs.get_release_version.outputs.version }}.sig
+#          asset_content_type: application/octet-stream
 
   release_macos_arm_jre:
     name: Release macOS ARM JRE
@@ -222,12 +222,12 @@ jobs:
           packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
           packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
         run: ./gradlew build
-      - name: Sign the macOS Artifact
-        run: |
-          cosign sign-blob build/distributions/ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --output-certificate ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem --output-signature ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig --yes
-      - name: Verify the macOS Artifact
-        run: |
-          cosign verify-blob build/distributions/ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-release.yml@${{ github.ref }} --certificate-oidc-issuer=https://token.actions.githubusercontent.com
+#      - name: Sign the macOS Artifact
+#        run: |
+#          cosign sign-blob build/distributions/ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --output-certificate ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem --output-signature ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig --yes
+#      - name: Verify the macOS Artifact
+#        run: |
+#          cosign verify-blob build/distributions/ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip --certificate ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem --signature ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig --certificate-identity=https://github.com/ballerina-platform/ballerina-custom-jre/.github/workflows/publish-release.yml@${{ github.ref }} --certificate-oidc-issuer=https://token.actions.githubusercontent.com
       - name: Upload macOS artifacts
         uses: actions/upload-release-asset@v1
         env:
@@ -237,21 +237,21 @@ jobs:
           asset_name: ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.zip
           asset_path: build/distributions/ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}-SNAPSHOT.zip
           asset_content_type: application/octet-stream
-      - name: Upload Certificate of the macOS Artifact to GitHub release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
-        with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem
-          asset_path: ./ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem
-          asset_content_type: application/octet-stream
-      - name: Upload Signature of the macOS Artifact to GitHub release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
-        with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_name: ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig
-          asset_path: ./ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig
-          asset_content_type: application/octet-stream
+#      - name: Upload Certificate of the macOS Artifact to GitHub release
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
+#        with:
+#          upload_url: ${{ needs.create_release.outputs.upload_url }}
+#          asset_name: ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem
+#          asset_path: ./ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.pem
+#          asset_content_type: application/octet-stream
+#      - name: Upload Signature of the macOS Artifact to GitHub release
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.BALLERINA_BOT_TOKEN }}
+#        with:
+#          upload_url: ${{ needs.create_release.outputs.upload_url }}
+#          asset_name: ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig
+#          asset_path: ./ballerina-jre-macos-arm-64-${{ needs.get_release_version.outputs.version }}.sig
+#          asset_content_type: application/octet-stream
