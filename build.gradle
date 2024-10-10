@@ -35,6 +35,8 @@ def ballerinaJreWindowsZip = file("$buildDir/distributions/ballerina-jre-windows
 def ballerinaJreMacOSZip = file("$buildDir/distributions/ballerina-jre-macos-64-${project.version}.zip")
 def ballerinaJreMacOSARMZip = file("$buildDir/distributions/ballerina-jre-macos-arm-64-${project.version}.zip")
 
+def targetedOSName = project.hasProperty('targetedOS') ? project.targetedOS : Os.isFamily(Os.FAMILY_MAC) ? "mac" : Os.isFamily(Os.FAMILY_UNIX) ? "linux" : "windows"
+
 task getModuleList {
     // Reads default modules included in AdoptOpenJre 17
     def defaultModuleFile = new File("$projectDir/resources/adoptOpenJre17_modules.json")
@@ -87,7 +89,7 @@ task extractJdkForLinux(type: Copy, dependsOn: downloadJdkforLinux) {
     includeEmptyDirs = false
 }
 
-task extractJdkForLinuxARM(type: Copy, dependsOn: downloadJdkforLinux) {
+task extractJdkForLinuxARM(type: Copy, dependsOn: downloadJdkforLinuxARM) {
     from tarTree(downloadJdkforLinuxARM.dest)
     into "$buildDir/temp/extracted/jdk-linux-arm"
     includeEmptyDirs = false
@@ -119,7 +121,7 @@ task assembleJreForLinux(type: Exec, dependsOn: extractJdkForLinux) {
             '--output', "$buildDir/temp/generated/ballerina-jre-linux-64/jdk-${project.jdkVersion}-jre"
 }
 
-task assembleJreForLinuxARM(type: Exec, dependsOn: extractJdkForLinux) {
+task assembleJreForLinuxARM(type: Exec, dependsOn: extractJdkForLinuxARM) {
     workingDir "$buildDir/temp/extracted/jdk-linux-arm/jdk-${project.jdkVersion}/bin"
     commandLine "$buildDir/temp/extracted/jdk-linux-arm/jdk-${project.jdkVersion}/bin/jlink",
             '--module-path', "$buildDir/temp/extracted/jdk-linux-arm/jdk-${project.jdkVersion}/jmods",
@@ -192,20 +194,24 @@ if (moduleVersion.indexOf('-') != -1) {
 }
 
 task build {
-    if (Os.isFamily(Os.FAMILY_MAC)) {
+    println("Building for Operating System: " + targetedOSName)
+
+    if (targetedOSName == Os.FAMILY_MAC || targetedOSName == "macos") {
         dependsOn packageJreForMac
+    } else if (targetedOSName == "macos-arm") {
         dependsOn packageJreForMacARM
-    } else if (Os.isFamily(Os.FAMILY_UNIX)) {
+    } else if (targetedOSName == Os.FAMILY_UNIX || targetedOSName == "linux") {
         dependsOn packageJreForLinux
+    } else if (targetedOSName == "linux-arm") {
         dependsOn packageJreForLinuxARM
-    } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    } else if (targetedOSName == Os.FAMILY_WINDOWS || targetedOSName == "windows") {
         dependsOn packageJreForWindows
     }
 }
 
 artifacts {
     zip file: ballerinaJreLinuxZip, builtBy: packageJreForLinux
-    zip file: ballerinaJreLinuxARMZip, builtBy: packageJreForLinux
+    zip file: ballerinaJreLinuxARMZip, builtBy: packageJreForLinuxARM
     zip file: ballerinaJreWindowsZip, builtBy: packageJreForWindows
     zip file: ballerinaJreMacOSZip, builtBy: packageJreForMac
     zip file: ballerinaJreMacOSARMZip, builtBy: packageJreForMacARM
