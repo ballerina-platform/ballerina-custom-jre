@@ -42,6 +42,7 @@ jobs:
 
   release_linux_jre:
     name: Release Linux JRE
+    needs: create_release
     runs-on: ubuntu-latest
     if: github.repository_owner == 'ballerina-platform'
     steps:
@@ -94,6 +95,7 @@ jobs:
 
   release_windows_jre:
     name: Release Windows JRE
+    needs: create_release
     runs-on: windows-latest
     if: github.repository_owner == 'ballerina-platform'
     steps:
@@ -146,6 +148,7 @@ jobs:
 
   release_macos_jre:
     name: Release macOS JRE
+    needs: create_release
     runs-on: macos-latest
     if: github.repository_owner == 'ballerina-platform'
     steps:
@@ -198,6 +201,7 @@ jobs:
 
   release_macos_arm_jre:
     name: Release macOS ARM JRE
+    needs: create_release
     runs-on: macos-latest
     if: github.repository_owner == 'ballerina-platform'
     steps:
