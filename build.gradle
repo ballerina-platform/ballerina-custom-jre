@@ -38,8 +38,8 @@ def ballerinaJreMacOSARMZip = file("$buildDir/distributions/ballerina-jre-macos-
 def targetedOSName = project.hasProperty('targetedOS') ? project.targetedOS : Os.isFamily(Os.FAMILY_MAC) ? "mac" : Os.isFamily(Os.FAMILY_UNIX) ? "linux" : "windows"
 
 task getModuleList {
-    // Reads default modules included in AdoptOpenJre 17
-    def defaultModuleFile = new File("$projectDir/resources/adoptOpenJre17_modules.json")
+    // Reads default modules included in AdoptOpenJre 21
+    def defaultModuleFile = new File("$projectDir/resources/adoptOpenJre21_modules.json")
     def defaultModules = new JsonSlurper().parseText(defaultModuleFile.text).modules.join(',')
 
     // Reads additional modules required for ballerina runtime.
