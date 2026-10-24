@@ -37,6 +37,60 @@ def ballerinaJreMacOSARMZip = file("$buildDir/distributions/ballerina-jre-macos-
 
 def targetedOSName = project.hasProperty('targetedOS') ? project.targetedOS : Os.isFamily(Os.FAMILY_MAC) ? "mac" : Os.isFamily(Os.FAMILY_UNIX) ? "linux" : "windows"
 
+// Windows can temporarily lag behind the other platforms when Temurin publishes it later.
+def windowsJdkVersion = project.findProperty('windowsJdkVersion') ?: project.jdkVersion
+
+// Trust-store hardening for the eMudhra CA compromise (October 2026, CVE-2026-91403).
+// 1. Removes emSign ECC Root CA - G3 from cacerts when the upstream JDK still ships it.
+// 2. Adds the compromised intermediates to blocked.certs, so they are rejected even when an
+//    application configures its own trust store.
+// Remove once every bundled Temurin build includes the upstream fix.
+def distrustedRootFingerprints = [
+        // emSign ECC Root CA - G3
+        '86:A1:EC:BA:08:9C:4A:8D:3B:BE:27:34:C6:12:BA:34:1D:81:3E:04:3C:F9:E8:A8:62:CD:5C:57:A3:6B:BE:6B'
+]
+def blockedCertsInventory = file("$projectDir/resources/emudhra-blocked-certs.txt")
+
+def hardenJreTrustStore = { String jrePath ->
+    // Use the generated JRE's own keytool so cacerts keeps its original (password-less PKCS12) format.
+    def keytool = "${jrePath}/bin/keytool"
+    def listing = new ByteArrayOutputStream()
+    project.exec {
+        commandLine keytool, '-list', '-v', '-cacerts', '-storepass', 'changeit'
+        standardOutput = listing
+    }
+    def aliasesToRemove = []
+    String currentAlias = null
+    listing.toString('UTF-8').eachLine { line ->
+        def trimmed = line.trim()
+        if (trimmed.startsWith('Alias name: ')) {
+            currentAlias = trimmed.substring('Alias name: '.length())
+        } else if (trimmed.startsWith('SHA256: ') &&
+                distrustedRootFingerprints.contains(trimmed.substring('SHA256: '.length()).trim())) {
+            aliasesToRemove << currentAlias
+        }
+    }
+    aliasesToRemove.each { alias ->
+        project.exec {
+            commandLine keytool, '-delete', '-cacerts', '-storepass', 'changeit', '-noprompt', '-alias', alias
+        }
+        println "Removed distrusted root '${alias}' from ${jrePath}"
+    }
+
+    def blockedCerts = project.file("${jrePath}/lib/security/blocked.certs")
+    if (!blockedCerts.exists()) {
+        throw new GradleException("blocked.certs not found in ${jrePath}")
+    }
+    def existing = blockedCerts.readLines().collect { it.trim() } as Set
+    def additions = blockedCertsInventory.readLines().collect { it.trim() }
+            .findAll { it ==~ /[0-9A-F]{64}/ && !existing.contains(it) }
+    if (additions) {
+        def separator = blockedCerts.text.endsWith('\n') ? '' : '\n'
+        blockedCerts.append(separator + additions.join('\n') + '\n')
+        println "Added ${additions.size()} compromised certificates to ${blockedCerts}"
+    }
+}
+
 task getModuleList {
     // Reads default modules included in AdoptOpenJre 25
     def defaultModuleFile = new File("$projectDir/resources/adoptOpenJre25_modules.json")
@@ -130,11 +184,11 @@ task assembleJreForLinuxARM(type: Exec, dependsOn: extractJdkForLinuxARM) {
 }
 
 task assembleJreForWindows(type: Exec, dependsOn: extractJdkForWindows) {
-    workingDir "$buildDir/temp/extracted/jdk-windows/jdk-${project.jdkVersion}/bin"
-    commandLine "$buildDir/temp/extracted/jdk-windows/jdk-${project.jdkVersion}/bin/jlink",
-            '--module-path', "$buildDir/temp/extracted/jdk-windows/jdk-${project.jdkVersion}/jmods",
+    workingDir "$buildDir/temp/extracted/jdk-windows/jdk-${windowsJdkVersion}/bin"
+    commandLine "$buildDir/temp/extracted/jdk-windows/jdk-${windowsJdkVersion}/bin/jlink",
+            '--module-path', "$buildDir/temp/extracted/jdk-windows/jdk-${windowsJdkVersion}/jmods",
             '--add-modules', jdkModules,
-            '--output', "$buildDir/temp/generated/ballerina-jre-windows-64/jdk-${project.jdkVersion}-jre"
+            '--output', "$buildDir/temp/generated/ballerina-jre-windows-64/jdk-${windowsJdkVersion}-jre"
 }
 
 task assembleJreForMac(type: Exec, dependsOn: extractJdkForMac) { // Check for Content/Home directory
@@ -255,4 +309,20 @@ assembleJreForLinuxARM.dependsOn cleanGeneratedFiles
 assembleJreForWindows.dependsOn cleanGeneratedFiles
 assembleJreForMac.dependsOn cleanGeneratedFiles
 assembleJreForMacARM.dependsOn cleanGeneratedFiles
+
+assembleJreForLinux.doLast {
+    hardenJreTrustStore("$buildDir/temp/generated/ballerina-jre-linux-64/jdk-${project.jdkVersion}-jre")
+}
+assembleJreForLinuxARM.doLast {
+    hardenJreTrustStore("$buildDir/temp/generated/ballerina-jre-linux-arm-64/jdk-${project.jdkVersion}-jre")
+}
+assembleJreForWindows.doLast {
+    hardenJreTrustStore("$buildDir/temp/generated/ballerina-jre-windows-64/jdk-${windowsJdkVersion}-jre")
+}
+assembleJreForMac.doLast {
+    hardenJreTrustStore("$buildDir/temp/generated/ballerina-jre-macos-64/jdk-${project.jdkVersion}-jre")
+}
+assembleJreForMacARM.doLast {
+    hardenJreTrustStore("$buildDir/temp/generated/ballerina-jre-macos-arm-64/jdk-${project.jdkVersion}-jre")
+}
 
