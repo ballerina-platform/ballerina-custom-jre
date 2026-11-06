@@ -2,12 +2,6 @@ name: Publish release
 
 on:
   workflow_dispatch:
-    inputs:
-      macos_only:
-        description: 'Build missing macOS ZIPs for the existing release in gradle.properties'
-        type: boolean
-        required: false
-        default: false
   
 permissions:
   id-token: write 
@@ -33,24 +27,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository_owner == 'ballerina-platform'
     outputs:
-      upload_url: ${{ steps.existing_release.outputs.upload_url || steps.create_release.outputs.upload_url }}
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-      - name: Find existing release for macOS recovery
-        if: ${{ inputs.macos_only }}
-        id: existing_release
-        uses: actions/github-script@v8
-        env:
-          RELEASE_VERSION: ${{ needs.get_release_version.outputs.version }}
-        with:
-          github-token: ${{ secrets.BALLERINA_BOT_TOKEN }}
-          script: |
-            const { data: release } = await github.rest.repos.getReleaseByTag({
-              ...context.repo,
-              tag: process.env.RELEASE_VERSION
-            });
-            core.setOutput('upload_url', release.upload_url);
       - name: Create release
-        if: ${{ !inputs.macos_only }}
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -65,7 +44,7 @@ jobs:
     name: Release Linux JRE
     needs: [ get_release_version, create_release ]
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner == 'ballerina-platform' && !inputs.macos_only }}
+    if: github.repository_owner == 'ballerina-platform'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
@@ -119,7 +98,7 @@ jobs:
     name: Release Windows JRE
     needs: [ get_release_version, create_release ]
     runs-on: windows-latest
-    if: ${{ github.repository_owner == 'ballerina-platform' && !inputs.macos_only }}
+    if: github.repository_owner == 'ballerina-platform'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
