@@ -50,35 +50,35 @@ task getModuleList {
 
 task downloadJdkforLinux(type: Download) {
     src project.linuxJdkUrl
-    dest new File("$buildDir/temp/downloads/", "jdk-linux.tar.gz")
+    dest new File("$buildDir/temp/downloads/", "jdk-linux-${project.jdkVersion}.tar.gz")
     overwrite false
     onlyIfModified true
 }
 
 task downloadJdkforLinuxARM(type: Download) {
     src project.linuxARMJdkUrl
-    dest new File("$buildDir/temp/downloads/", "jdk-linux-arm.tar.gz")
+    dest new File("$buildDir/temp/downloads/", "jdk-linux-arm-${project.jdkVersion}.tar.gz")
     overwrite false
     onlyIfModified true
 }
 
 task downloadJdkforWindows(type: Download) {
     src project.windowsJdkUrl
-    dest new File("$buildDir/temp/downloads/", "jdk-windows.zip")
+    dest new File("$buildDir/temp/downloads/", "jdk-windows-${project.jdkVersion}.zip")
     overwrite false
     onlyIfModified true
 }
 
 task downloadJdkforMac(type: Download) {
     src project.macJdkUrl
-    dest new File("$buildDir/temp/downloads/", "jdk-macOS.tar.gz")
+    dest new File("$buildDir/temp/downloads/", "jdk-macOS-${project.jdkVersion}.tar.gz")
     overwrite false
     onlyIfModified true
 }
 
 task downloadJdkforMacARM(type: Download) {
     src project.macARMJdkUrl
-    dest new File("$buildDir/temp/downloads/", "jdk-macOS-arm.tar.gz")
+    dest new File("$buildDir/temp/downloads/", "jdk-macOS-arm-${project.jdkVersion}.tar.gz")
     overwrite false
     onlyIfModified true
 }
